@@ -10,5 +10,8 @@ todo-app/
     └── todo.db         # File cơ sở dữ liệu
 ```
 
-Version: 1.0.0:
-    - Thêm task, xóa task, edit task
+### Version 1.0.0:
+- Add task, delete task, edit task
+
+### Version 1.1.0:
+- Filter task, sort task by created time
