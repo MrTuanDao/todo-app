@@ -12,6 +12,18 @@
         <button type="submit">Add Task</button>
     </form>
 
+    <!-- Dropdown lọc -->
+    <form action="{{ url_for('index') }}" method="GET">
+        <select name="filter" onchange="this.form.submit()">
+            <option value="all" {% if filter_status == 'all' %}selected{% endif %}>All Tasks</option>
+            <option value="completed" {% if filter_status == 'completed' %}selected{% endif %}>Completed</option>
+            <option value="incomplete" {% if filter_status == 'incomplete' %}selected{% endif %}>Incomplete</option>
+        </select>
+        <!-- Giữ trạng thái sắp xếp khi lọc -->
+        <input type="hidden" name="sort" value="{{ sort }}">
+        <input type="hidden" name="order" value="{{ order }}">
+    </form>
+
     {% if edit_task %}
         <h2>Edit Task</h2>
         <form action="{{ url_for('edit_task', task_id=edit_task.id) }}" method="POST">
@@ -21,15 +33,32 @@
         </form>
     {% endif %}
 
-    <ul>
-        {% for task in tasks %}
-        <li class="{% if task.completed %}completed{% endif %}">
-            {{ task.title }}
-            <a href="{{ url_for('complete_task', task_id=task.id) }}">Complete</a>
-            <a href="{{ url_for('delete_task', task_id=task.id) }}">Delete</a>
-            <a href="{{ url_for('edit_task', task_id=task.id) }}">Edit</a>
-        </li>
-        {% endfor %}
-    </ul>
+    <!-- Danh sách tasks với tiêu đề cột -->
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>
+                    <a href="{{ url_for('index', filter=filter_status, sort='created_at', order='asc' if order == 'desc' else 'desc') }}">
+                        Created At {% if sort == 'created_at' %}{{ '↓' if order == 'desc' else '↑' }}{% endif %}
+                    </a>
+                </th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+            <tr class="{% if task.completed %}completed{% endif %}">
+                <td>{{ task.title }}</td>
+                <td>{{ task.created_at.strftime('%Y-%m-%d %H:%M:%S') if task.created_at else 'N/A' }}</td>
+                <td>
+                    <a href="{{ url_for('complete_task', task_id=task.id) }}">Complete</a>
+                    <a href="{{ url_for('delete_task', task_id=task.id) }}">Delete</a>
+                    <a href="{{ url_for('edit_task', task_id=task.id) }}">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>
